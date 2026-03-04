@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "blackroad-stripe-service"
+version = "1.0.0"
+description = "BlackRoad Stripe payment integration service with e2e tests and Pi routing"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+    "e2e: end-to-end tests requiring Stripe test keys",
+    "unit: unit tests with mocked dependencies",
+]
+
+[tool.setuptools.packages.find]
+include = ["stripe_service*"]
