@@ -1,0 +1,14 @@
+{
+  "cqr_kvret_dev_public.json": {
+    "sha256": "b043b02a2d553ffa59c6d0eafb1a3d5b085f28e4ca08b227992921d176fa455b",
+    "size_bytes": 1372547
+  },
+  "cqr_kvret_test_public.json": {
+    "sha256": "2cd70b39ece880242f8dd82933ccee9bdc3c4acaf3eb3828bda51df5d1ae5b76",
+    "size_bytes": 1409098
+  },
+  "cqr_kvret_train_public.json": {
+    "sha256": "879ed1ff43d48cc2fa548af4a9448cdb1ff4dc513be403066e5587337846b0e1",
+    "size_bytes": 11245101
+  }
+}

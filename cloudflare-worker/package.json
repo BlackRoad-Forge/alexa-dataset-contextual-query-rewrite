@@ -1,0 +1,15 @@
+{
+  "name": "cqr-dataset-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cloudflare Worker API for the CQR dataset",
+  "main": "src/worker.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "wrangler": "3.99.0"
+  }
+}

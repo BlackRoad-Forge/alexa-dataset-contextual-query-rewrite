@@ -1,0 +1,11 @@
+# Default code owners for all files
+* @blackboxprogramming
+
+# Workflows require admin review
+.github/ @blackboxprogramming
+
+# Dataset files
+*.json @blackboxprogramming
+
+# Cloudflare Worker
+cloudflare-worker/ @blackboxprogramming

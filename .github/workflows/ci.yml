@@ -1,0 +1,86 @@
+name: CI — Dataset Validation
+
+on:
+  push:
+    branches: [master, main, "claude/**"]
+  pull_request:
+    branches: [master, main]
+  schedule:
+    # Weekly integrity check — Sundays at 06:00 UTC
+    - cron: "0 6 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-dataset:
+    name: Validate JSON Dataset Integrity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+
+      - name: Run dataset validation
+        run: python3 .github/scripts/validate_data.py
+
+      - name: Verify checksums
+        shell: bash
+        run: |
+          echo "Verifying checksums against committed checksums.json..."
+          python3 -c "
+          import hashlib, json, pathlib, sys
+          with open('checksums.json') as f:
+              committed = json.load(f)
+          errors = 0
+          for name in sorted(committed):
+              expected = committed[name]['sha256']
+              actual = hashlib.sha256(pathlib.Path(name).read_bytes()).hexdigest()
+              if expected != actual:
+                  print(f'MISMATCH: {name}')
+                  print(f'  expected: {expected}')
+                  print(f'  actual:   {actual}')
+                  errors += 1
+              else:
+                  print(f'OK: {name}')
+          sys.exit(1 if errors else 0)
+          "
+          echo "All checksums verified."
+
+  lint-json:
+    name: Lint JSON Files
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Validate JSON syntax
+        run: |
+          set -e
+          for f in cqr_*.json checksums.json; do
+            echo "Validating $f ..."
+            python3 -m json.tool "$f" > /dev/null
+            echo "  OK"
+          done
+
+  lint-yaml:
+    name: Lint YAML Workflows
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install yamllint
+        run: pip install yamllint==1.35.1
+
+      - name: Lint YAML files
+        run: |
+          yamllint -d '{extends: default, rules: {line-length: {max: 200}, truthy: disable}}' .github/workflows/
